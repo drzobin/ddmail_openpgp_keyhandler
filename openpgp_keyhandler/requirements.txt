@@ -1,0 +1,5 @@
+flask
+argon2_cffi
+pytest
+coverage
+gunicorn
