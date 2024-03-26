@@ -10,6 +10,23 @@ def is_password_allowed(password):
 
     return True
 
+# Validate openpgp public key. Only allow the following chars: A-Z, a-z, 0-9 and +/=
+def is_public_key_allowed(public_key):
+
+    # Check start and end of string.
+    if public_key.startswith("-----BEGIN PGP PUBLIC KEY BLOCK-----") != True:
+        return False
+    if public_key.endswith("-----END PGP PUBLIC KEY BLOCK-----") != True:
+        return False
+
+    # Only allow A-Z ,a-z, 0-9 and +/=
+    pattern = re.compile(r"[a-zA-Z0-9\+\/\=]")
+    for char in public_key:
+        if not re.match(pattern, char):
+            return False
+
+    return True
+
 # Validate openpgp public key fingerprint string. Only allow the following chars: A-Z, 0-9
 def is_fingerprint_allowed(fingerprint):
     # Fingerprint string should be 40 char.
