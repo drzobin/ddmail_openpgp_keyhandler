@@ -34,13 +34,13 @@ def upload_public_key():
         ph = PasswordHasher()
 
         # Get post form data.
-        fingerprint = request.form.get('fingerprint')
+        public_key = request.form.get('public_key')
         password = request.form.get('password')
 
-        # Validate fingerprint.
-        if is_fingeprint_allowed(fingerprint) != True:
-            logging.error("upload_public_key() fingerprint validation failed")
-            return "error: fingerprint validation failed"
+        # Validate public_key.
+        if is_public_key_allowed(public_key) != True:
+            logging.error("upload_public_key() public key validation failed")
+            return "error: public key validation failed"
 
         # Validate password.
         if is_password_allowed(password) != True:
