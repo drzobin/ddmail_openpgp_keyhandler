@@ -29,7 +29,7 @@ def hash_data():
         return data_hash
 
 @bp.route("/upload_public_key", methods=["POST"])
-def create_key():
+def upload_public_key():
     if request.method == 'POST':
         ph = PasswordHasher()
 
@@ -64,7 +64,7 @@ def create_key():
         return "done"
 
 @bp.route("/remove_public_key", methods=["POST"])
-def change_password_on_key():
+def remove_public_key():
     if request.method == 'POST':
         ph = PasswordHasher()
 
