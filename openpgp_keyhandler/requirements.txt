@@ -3,3 +3,4 @@ argon2_cffi
 pytest
 coverage
 gunicorn
+python-gnupg
