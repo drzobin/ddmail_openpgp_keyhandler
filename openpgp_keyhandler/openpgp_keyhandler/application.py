@@ -61,8 +61,16 @@ def upload_public_key():
         time.sleep(1)
 
         # Upload public key.
-        logging.debug("upload_public_key() done")
-        return "done"
+        gpg = gnupg.GPG(gnupghome=current_app.config["GNUPG_HOME"])
+        import_result = gpg.import_keys(public_key)
+
+        # Check if 1 key has been imported.
+        if import_result.count != 1:
+            logging.error("upload_public_key() import_result.count is not 1")
+            return "error: failed to upload public key"
+
+        logging.debug("upload_public_key() imported public key with fingerprint: " + import_result.fingerprints)
+        return import_result.fingerprints
 
 @bp.route("/remove_public_key", methods=["POST"])
 def remove_public_key():
