@@ -6,7 +6,7 @@ import subprocess
 import logging
 import gnupg
 
-from openpgp_keyhandler.validators import is_domain_allowed, is_password_allowed, is_email_allowed
+from openpgp_keyhandler.validators import is_password_allowed, is_public_key_allowed
 
 bp = Blueprint("application", __name__, url_prefix="/")
 
