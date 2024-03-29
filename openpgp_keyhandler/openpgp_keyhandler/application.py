@@ -73,7 +73,7 @@ def upload_public_key():
         gpg.trust_keys(import_result.fingerprints, "TRUST_ULTIMATE")
 
         logging.debug("upload_public_key() imported public key with fingerprint: " + import_result.fingerprints)
-        return import_result.fingerprints
+        return "fingerprint: " + import_result.fingerprints
 
 @bp.route("/remove_public_key", methods=["POST"])
 def remove_public_key():
