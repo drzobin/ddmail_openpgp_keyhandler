@@ -69,6 +69,9 @@ def upload_public_key():
             logging.error("upload_public_key() import_result.count is not 1")
             return "error: failed to upload public key"
 
+        # Set trustlevel of imported key.
+        gpg.trust_keys(import_result.fingerprints, "TRUST_ULTIMATE")
+
         logging.debug("upload_public_key() imported public key with fingerprint: " + import_result.fingerprints)
         return import_result.fingerprints
 
@@ -104,5 +107,8 @@ def remove_public_key():
         time.sleep(1)
 
         # Remove public key.
+        gpg = gnupg.GPG(gnupghome=current_app.config["GNUPG_HOME"])
+        import_result = gpg.import_keys(public_key)
+
         logging.debug("remove_public_key() done")
         return "done"
