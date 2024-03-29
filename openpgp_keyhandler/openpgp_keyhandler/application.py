@@ -4,6 +4,7 @@ import os
 import time
 import subprocess
 import logging
+import gnupg
 
 from openpgp_keyhandler.validators import is_domain_allowed, is_password_allowed, is_email_allowed
 
