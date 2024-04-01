@@ -12,6 +12,9 @@ def is_password_allowed(password):
 
 # Validate openpgp public key. Only allow the following chars: A-Z, a-z, 0-9 and +/=
 def is_public_key_allowed(public_key):
+    print(public_key)
+    if public_key == None:
+        return False
 
     # Check start and end of string.
     if public_key.startswith("-----BEGIN PGP PUBLIC KEY BLOCK-----") != True:
@@ -19,12 +22,14 @@ def is_public_key_allowed(public_key):
     if public_key.endswith("-----END PGP PUBLIC KEY BLOCK-----") != True:
         return False
 
-    public_key = public_key.replace("-----BEGIN PGP PUBLIC KEY BLOCK-----", "", 1)
-    public_key = public_key.replace("-----END PGP PUBLIC KEY BLOCK-----", "", 1)
+    public_key = public_key.replace("-----BEGIN PGP PUBLIC KEY BLOCK-----","", 1)
+    public_key = public_key.replace("-----END PGP PUBLIC KEY BLOCK-----","", 1)
 
+    print("yes")
     # Only allow A-Z ,a-z, 0-9 and +/=
-    pattern = re.compile(r"[a-zA-Z0-9\+\/\=]")
+    pattern = re.compile(r"[a-zA-Z0-9\+\/\=\s]")
     for char in public_key:
+        print(char)
         if not re.match(pattern, char):
             return False
 
