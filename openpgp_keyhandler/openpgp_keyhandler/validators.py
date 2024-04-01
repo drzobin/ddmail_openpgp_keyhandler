@@ -10,6 +10,16 @@ def is_password_allowed(password):
 
     return True
 
+# Validate keyring. Only allow the following chars: A-Z and 0-9
+def is_keyring_allowed(keyring):
+    pattern = re.compile(r"[A-Z0-9]")
+
+    for char in keyring:
+        if not re.match(pattern, char):
+            return False
+
+    return True
+
 # Validate openpgp public key. Only allow the following chars: A-Z, a-z, 0-9 and +/=
 def is_public_key_allowed(public_key):
     print(public_key)
@@ -25,7 +35,6 @@ def is_public_key_allowed(public_key):
     public_key = public_key.replace("-----BEGIN PGP PUBLIC KEY BLOCK-----","", 1)
     public_key = public_key.replace("-----END PGP PUBLIC KEY BLOCK-----","", 1)
 
-    print("yes")
     # Only allow A-Z ,a-z, 0-9 and +/=
     pattern = re.compile(r"[a-zA-Z0-9\+\/\=\s]")
     for char in public_key:
