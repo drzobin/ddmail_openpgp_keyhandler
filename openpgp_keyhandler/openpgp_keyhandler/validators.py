@@ -25,6 +25,8 @@ def is_public_key_allowed(public_key):
     if public_key == None:
         return False
 
+    public_key = public_key.strip()
+
     # Check start and end of string.
     if public_key.startswith("-----BEGIN PGP PUBLIC KEY BLOCK-----") != True:
         return False
