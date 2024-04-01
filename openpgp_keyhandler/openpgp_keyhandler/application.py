@@ -76,17 +76,14 @@ def upload_public_key():
 
         # Check if 1 key has been imported.
         if import_result.count != 1:
-            print(public_key)
-            print(str(import_result.count))
-            print(str(import_result.fingerprints))
             logging.error("upload_public_key() import_result.count is not 1")
             return "error: failed to upload public key"
 
         # Set trustlevel of imported key.
-        gpg.trust_keys(import_result.fingerprints, "TRUST_ULTIMATE")
+        gpg.trust_keys(import_result.fingerprints[0], "TRUST_ULTIMATE")
 
-        logging.debug("upload_public_key() imported public key with fingerprint: " + import_result.fingerprints)
-        return "fingerprint: " + import_result.fingerprints
+        logging.debug("upload_public_key() imported public key with fingerprint: " + import_result.fingerprints[0])
+        return "fingerprint: " + import_result.fingerprints[0]
 
 @bp.route("/remove_public_key", methods=["POST"])
 def remove_public_key():
