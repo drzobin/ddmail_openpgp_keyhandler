@@ -29,7 +29,6 @@ def is_public_key_allowed(public_key):
     # Only allow A-Z ,a-z, 0-9 and +/=
     pattern = re.compile(r"[a-zA-Z0-9\+\/\=\s]")
     for char in public_key:
-        print(char)
         if not re.match(pattern, char):
             return False
 
