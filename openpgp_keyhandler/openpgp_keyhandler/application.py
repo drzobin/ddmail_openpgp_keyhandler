@@ -6,7 +6,7 @@ import subprocess
 import logging
 import gnupg
 
-from openpgp_keyhandler.validators import is_password_allowed, is_public_key_allowed
+from openpgp_keyhandler.validators import is_password_allowed, is_public_key_allowed, is_keyring_allowed
 
 bp = Blueprint("application", __name__, url_prefix="/")
 
@@ -36,15 +36,21 @@ def upload_public_key():
 
         # Get post form data.
         public_key = request.form.get('public_key')
+        keyring = request.form.get('keyring')
         password = request.form.get('password')
 
         # Validate public_key.
-        if is_public_key_allowed(public_key) != True:
+        if public_key == None or is_public_key_allowed(public_key) != True:
             logging.error("upload_public_key() public key validation failed")
             return "error: public key validation failed"
 
+        # Validate keyring.
+        if keyring == None or is_keyring_allowed(keyring) != True:
+            logging.error("upload_public_key() keyring validation failed")
+            return "error: keyring validation failed"
+
         # Validate password.
-        if is_password_allowed(password) != True:
+        if password == None or is_password_allowed(password) != True:
             logging.error("upload_public_key() password validation failed")
             return "error: password validation failed"
 
@@ -61,11 +67,18 @@ def upload_public_key():
         time.sleep(1)
 
         # Upload public key.
-        gpg = gnupg.GPG(gnupghome=current_app.config["GNUPG_HOME"])
+        gnuhome_path = current_app.config["GNUPG_HOME"]
+        keyring_path = current_app.config["GNUPG_HOME"] + "/" + keyring
+
+        gpg = gnupg.GPG(gnupghome=gnuhome_path, keyring=keyring_path)
+
         import_result = gpg.import_keys(public_key)
 
         # Check if 1 key has been imported.
         if import_result.count != 1:
+            print(public_key)
+            print(str(import_result.count))
+            print(str(import_result.fingerprints))
             logging.error("upload_public_key() import_result.count is not 1")
             return "error: failed to upload public key"
 
