@@ -22,7 +22,6 @@ def is_keyring_allowed(keyring):
 
 # Validate openpgp public key. Only allow the following chars: A-Z, a-z, 0-9 and +/=
 def is_public_key_allowed(public_key):
-    print(public_key)
     if public_key == None:
         return False
 
