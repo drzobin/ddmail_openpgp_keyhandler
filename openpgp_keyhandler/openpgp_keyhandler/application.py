@@ -6,7 +6,7 @@ import subprocess
 import logging
 import gnupg
 
-from openpgp_keyhandler.validators import is_password_allowed, is_public_key_allowed, is_keyring_allowed
+from openpgp_keyhandler.validators import is_password_allowed, is_public_key_allowed, is_keyring_allowed, is_fingerprint_allowed
 
 bp = Blueprint("application", __name__, url_prefix="/")
 
@@ -39,18 +39,36 @@ def upload_public_key():
         keyring = request.form.get('keyring')
         password = request.form.get('password')
 
+        # Check if input from form is None.
+        if public_key == None:
+            logging.error("remove_public_key() public_key is None")
+            return "error: public_key is none"
+
+        if keyring == None:
+            logging.error("remove_public_key() keyring is None")
+            return "error: keyring is none"
+
+        if password == None:
+            logging.error("remove_public_key() password is None")
+            return "error: password is none"
+
+        # Remove whitespace character.
+        public_key = public_key.strip()
+        keyring = keyring.strip()
+        password = password.strip()
+
         # Validate public_key.
-        if public_key == None or is_public_key_allowed(public_key) != True:
+        if is_public_key_allowed(public_key) != True:
             logging.error("upload_public_key() public key validation failed")
             return "error: public key validation failed"
 
         # Validate keyring.
-        if keyring == None or is_keyring_allowed(keyring) != True:
+        if is_keyring_allowed(keyring) != True:
             logging.error("upload_public_key() keyring validation failed")
             return "error: keyring validation failed"
 
         # Validate password.
-        if password == None or is_password_allowed(password) != True:
+        if is_password_allowed(password) != True:
             logging.error("upload_public_key() password validation failed")
             return "error: password validation failed"
 
@@ -66,12 +84,12 @@ def upload_public_key():
             return "error: wrong password"
         time.sleep(1)
 
-        # Upload public key.
+        # Create gnupg gpg object.
         gnuhome_path = current_app.config["GNUPG_HOME"]
         keyring_path = current_app.config["GNUPG_HOME"] + "/" + keyring
-
         gpg = gnupg.GPG(gnupghome=gnuhome_path, keyring=keyring_path)
 
+        # Upload public key.
         import_result = gpg.import_keys(public_key)
 
         # Check if 1 key has been imported.
@@ -79,8 +97,39 @@ def upload_public_key():
             logging.error("upload_public_key() import_result.count is not 1")
             return "error: failed to upload public key"
 
-        # Set trustlevel of imported key.
+        # Check that fingerprint from importe_result is not None.
+        if import_result.fingerprints[0] == None:
+            logging.error("remove_public_key() import_result.fingerprints[0] is None")
+            return "error: import_result.fingerprints[0] is None"
+
+        # Validate fingerprint from importe_result.
+        if is_fingerprint_allowed(import_result.fingerprints[0]) != True:
+            logging.error("remove_public_key() import_result.fingerprints[0] validation failed")
+            return "error: import_result.fingerprints[0] validation failed"
+
+        # Set trustlevel of imported public key.
         gpg.trust_keys(import_result.fingerprints[0], "TRUST_ULTIMATE")
+
+        # Get imported public keys data from keyring.
+        public_keys =  gpg.list_keys()
+        
+        fingerprint_from_keyring = None
+
+        # Find imported public key data in keyring.
+        for key in public_keys:
+            if key["fingerprint"] == import_result.fingerprints[0]:
+                # Get fingerprint from keystore.
+                fingerprint_from_keyring = key["fingerprint"]
+
+                # Check public key trust level.
+                if key["trust"] != "u":
+                    logging.error("upload_public_key() failed to set trust level of key " + str(import_result.fingerprint[0]) + " for keyring " + str(keyring))
+                    return "upload_public_key() failed to set trust level of key " + str(import_result.fingerprint[0]) + " for keyring " + str(keyring)
+
+        # Check that imported public key fingerprint exist in keyring.
+        if fingerprint_from_keyring == None:
+            logging.error("upload_public_key() failed to find key " + str(import_result.fingerprint[0])  +" in keyring " + str(keyring))
+            return "error: failed to find key " + str(import_result.fingerprint[0]) + " in keyring " + str(keyring)
 
         logging.debug("upload_public_key() imported public key with fingerprint: " + import_result.fingerprints[0])
         return "fingerprint: " + import_result.fingerprints[0]
@@ -92,12 +141,36 @@ def remove_public_key():
 
         # Get post form data.
         fingerprint = request.form.get('fingerprint')
+        keyring = request.form.get('keyring')
         password = request.form.get('password')
 
+        # Check if input from form is None.
+        if fingerprint == None:
+            logging.error("remove_public_key() fingerprint is None")
+            return "error: fingerprint is none"
+
+        if keyring == None:
+            logging.error("remove_public_key() keyring is None")
+            return "error: keyring is none"
+
+        if password == None:
+            logging.error("remove_public_key() password is None")
+            return "error: password is none"
+
+        # Remove whitespace character.
+        fingerprint = fingerprint.strip()
+        keyring = keyring.strip()
+        password = password.strip()
+
         # Validate fingerprint.
-        if is_fingerprint_allowed(email) != True:
+        if is_fingerprint_allowed(fingerprint) != True:
             logging.error("remove_public_key() fingerprint validation failed")
             return "error: fingerprint validation failed"
+
+        # Validate keyring.
+        if is_keyring_allowed(keyring) != True:
+            logging.error("upload_public_key() keyring validation failed")
+            return "error: keyring validation failed"
 
         # Validate password.
         if is_password_allowed(password) != True:
@@ -116,9 +189,49 @@ def remove_public_key():
             return "error: wrong password"
         time.sleep(1)
 
-        # Remove public key.
-        gpg = gnupg.GPG(gnupghome=current_app.config["GNUPG_HOME"])
-        import_result = gpg.import_keys(public_key)
+        # Create gnupg gpg object.
+        gnuhome_path = current_app.config["GNUPG_HOME"]
+        keyring_path = current_app.config["GNUPG_HOME"] + "/" + keyring
+        gpg = gnupg.GPG(gnupghome=gnuhome_path, keyring=keyring_path)
+
+        # Get public keys data from keyring.
+        public_keys =  gpg.list_keys()
+        
+        fingerprint_fom_keyring = None
+
+        # Find public key fingerprint in keyring.
+        for key in public_keys:
+            if key["fingerprint"] == fingerprint:
+                # Get fingerprint from keystore.
+                fingerprint_from_keyring = key["fingerprint"]
+
+        # Check that public key fingerprint exist in keyring.
+        if fingerprint_from_keyring == None:
+            logging.error("remove_public_key() failed to find key " + str(fingerprint)  +" in keyring " + str(keyring))
+            return "error: failed to find key " + str(fingerprint) + " in keyring " + str(keyring)
+
+        # Delete public key.
+        delete_result = gpg.delete_keys(fingerprint)
+
+        if str(delete_result) != "ok":
+            logging.error("remove_public_key() remove_result is not ok")
+            return "error: failed to remove public key"
+
+        # Get public keys data from keyring.
+        public_keys =  gpg.list_keys()
+
+        fingerprint_from_keyring = None
+
+        # Find public key fingerprint in keyring.
+        for key in public_keys:
+            if key["fingerprint"] == fingerprint:
+                # Get fingerprint from keystore.
+                fingerprint_from_keyring = key["fingerprint"]
+
+        # Check that public key fingerprint do not exist anymore in keyring.
+        if fingerprint_from_keyring != None:
+            logging.error("remove_public_key() failed key " + str(fingerprint)  +" is still in keyring " + str(keyring))
+            return "error: failed key " + str(fingerprint) + " is still in keyring " + str(keyring)
 
         logging.debug("remove_public_key() done")
         return "done"
