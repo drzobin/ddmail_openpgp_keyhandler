@@ -25,8 +25,6 @@ def is_public_key_allowed(public_key):
     if public_key == None:
         return False
 
-    public_key = public_key.strip()
-
     # Check start and end of string.
     if public_key.startswith("-----BEGIN PGP PUBLIC KEY BLOCK-----") != True:
         return False
@@ -46,6 +44,9 @@ def is_public_key_allowed(public_key):
 
 # Validate openpgp public key fingerprint string. Only allow the following chars: A-Z, 0-9
 def is_fingerprint_allowed(fingerprint):
+    if fingerprint == None:
+        return False
+
     # Fingerprint string should be 40 char.
     allowed_len = 40
     if len(fingerprint) != allowed_len:
