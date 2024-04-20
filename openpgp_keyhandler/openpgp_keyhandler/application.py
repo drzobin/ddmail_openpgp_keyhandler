@@ -132,7 +132,7 @@ def upload_public_key():
             return "error: failed to find key " + str(import_result.fingerprint[0]) + " in keyring " + str(keyring)
 
         logging.debug("upload_public_key() imported public key with fingerprint: " + import_result.fingerprints[0])
-        return "fingerprint: " + import_result.fingerprints[0]
+        return "done fingerprint: " + import_result.fingerprints[0]
 
 @bp.route("/remove_public_key", methods=["POST"])
 def remove_public_key():
