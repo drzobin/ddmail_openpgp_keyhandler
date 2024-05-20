@@ -87,7 +87,7 @@ def upload_public_key():
         # Create gnupg gpg object.
         gnuhome_path = current_app.config["GNUPG_HOME"]
         keyring_path = current_app.config["GNUPG_HOME"] + "/" + keyring
-        gpg = gnupg.GPG(gnupghome=gnuhome_path, keyring=keyring_path)
+        gpg = gnupg.GPG(gnupghome=gnuhome_path, keyring=keyring_path, gpgbinary="/usr/bin/gpg")
 
         # Upload public key.
         import_result = gpg.import_keys(public_key)
@@ -192,7 +192,7 @@ def remove_public_key():
         # Create gnupg gpg object.
         gnuhome_path = current_app.config["GNUPG_HOME"]
         keyring_path = current_app.config["GNUPG_HOME"] + "/" + keyring
-        gpg = gnupg.GPG(gnupghome=gnuhome_path, keyring=keyring_path)
+        gpg = gnupg.GPG(gnupghome=gnuhome_path, keyring=keyring_path, gpgbinary="/usr/bin/gpg")
 
         # Get public keys data from keyring.
         public_keys =  gpg.list_keys()
