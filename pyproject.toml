@@ -46,8 +46,8 @@ test = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/drzobin/ddmail_openpgp_handler"
-Issues = "https://github.com/drzobin/ddmail_openpgp_handler/issues"
+Homepage = "https://github.com/drzobin/ddmail_openpgp_keyhandler"
+Issues = "https://github.com/drzobin/ddmail_openpgp_keyhandler/issues"
 
 [build-system]
 requires = ["hatchling"]
