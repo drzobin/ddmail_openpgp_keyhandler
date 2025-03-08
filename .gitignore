@@ -1,4 +1,2 @@
 .coverage
-openpgp_keyhandler/__pycache__/
-openpgp_keyhandler/openpgp_keyhandler/__pycache__/
-openpgp_keyhandler/tests/__pycache__/
+__pycache__/
