@@ -1,0 +1,14 @@
+[PRODUCATION]
+    SECRET_KEY = 'change_me'
+    PASSWORD_HASH = 'change_me'
+    GNUPG_HOME = '/opt/ddmail_keyrings'
+
+[TESTING]
+    SECRET_KEY = 'change_me'
+    PASSWORD_HASH = 'change_me'
+    GNUPG_HOME = '/opt/ddmail_keyrings'
+
+[DEVELOPMENT]
+    SECRET_KEY = 'change_me'
+    PASSWORD_HASH = 'change_me'
+    GNUPG_HOME = '/opt/ddmail_keyrings'
