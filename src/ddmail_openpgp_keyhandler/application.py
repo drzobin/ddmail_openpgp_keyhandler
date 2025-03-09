@@ -41,12 +41,12 @@ def upload_public_key():
         password = password.strip()
 
         # Validate public_key.
-        if validators.is_public_key_allowed(public_key) != True:
+        if validators.is_openpgp_public_key_allowed(public_key) != True:
             logging.error("upload_public_key() public key validation failed")
             return "error: public key validation failed"
 
         # Validate keyring.
-        if validators.is_keyring_allowed(keyring) != True:
+        if validators.is_openpgp_keyring_allowed(keyring) != True:
             logging.error("upload_public_key() keyring validation failed")
             return "error: keyring validation failed"
 
