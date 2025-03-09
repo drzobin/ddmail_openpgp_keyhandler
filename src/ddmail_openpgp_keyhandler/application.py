@@ -1,33 +1,16 @@
-from flask import Blueprint, current_app, request
-from argon2 import PasswordHasher
 import os
 import time
 import subprocess
 import logging
 import gnupg
-
-from ddmail_openpgp_keyhandler.validators import is_password_allowed, is_public_key_allowed, is_keyring_allowed, is_fingerprint_allowed
+from flask import Blueprint, current_app, request
+from argon2 import PasswordHasher
+import ddmail_validators.validators as validators
 
 bp = Blueprint("application", __name__, url_prefix="/")
 
 # Configure logging.
 logging.basicConfig(filename="/var/log/ddmail_openpgp_keyhandler.log", format='%(asctime)s: %(levelname)s: %(message)s', level=logging.ERROR)
-
-@bp.route("/hash_data", methods=["POST"])
-def hash_data():
-    if request.method == 'POST':
-        ph = PasswordHasher()
-
-        data = request.form.get('data')
-
-        # Validate password.
-        if is_password_allowed(data) != True:
-            logging.error("hash_data() validation of data failed")
-            return "error: validation of data failed"
-
-        data_hash = ph.hash(data)
-
-        return data_hash
 
 @bp.route("/upload_public_key", methods=["POST"])
 def upload_public_key():
@@ -58,17 +41,17 @@ def upload_public_key():
         password = password.strip()
 
         # Validate public_key.
-        if is_public_key_allowed(public_key) != True:
+        if validators.is_public_key_allowed(public_key) != True:
             logging.error("upload_public_key() public key validation failed")
             return "error: public key validation failed"
 
         # Validate keyring.
-        if is_keyring_allowed(keyring) != True:
+        if validators.is_keyring_allowed(keyring) != True:
             logging.error("upload_public_key() keyring validation failed")
             return "error: keyring validation failed"
 
         # Validate password.
-        if is_password_allowed(password) != True:
+        if validators.is_password_allowed(password) != True:
             logging.error("upload_public_key() password validation failed")
             return "error: password validation failed"
 
@@ -103,7 +86,7 @@ def upload_public_key():
             return "error: import_result.fingerprints[0] is None"
 
         # Validate fingerprint from importe_result.
-        if is_fingerprint_allowed(import_result.fingerprints[0]) != True:
+        if validators.is_fingerprint_allowed(import_result.fingerprints[0]) != True:
             logging.error("remove_public_key() import_result.fingerprints[0] validation failed")
             return "error: import_result.fingerprints[0] validation failed"
 
@@ -163,17 +146,17 @@ def remove_public_key():
         password = password.strip()
 
         # Validate fingerprint.
-        if is_fingerprint_allowed(fingerprint) != True:
+        if validators.is_openpgp_key_fingerprint_allowed(fingerprint) != True:
             logging.error("remove_public_key() fingerprint validation failed")
             return "error: fingerprint validation failed"
 
         # Validate keyring.
-        if is_keyring_allowed(keyring) != True:
+        if validators.is_openpgp_keyring_allowed(keyring) != True:
             logging.error("upload_public_key() keyring validation failed")
             return "error: keyring validation failed"
 
         # Validate password.
-        if is_password_allowed(password) != True:
+        if validators.is_password_allowed(password) != True:
             logging.error("remove_public_key() password validation failed")
             return "error: password validation failed"
 
