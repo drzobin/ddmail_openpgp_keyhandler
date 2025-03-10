@@ -142,6 +142,11 @@ def remove_public_key():
         fingerprint = fingerprint.strip()
         keyring = keyring.strip()
         password = password.strip()
+        
+        # Validate password.
+        if validators.is_password_allowed(password) != True:
+            logging.error("remove_public_key() password validation failed")
+            return "error: password validation failed"
 
         # Validate fingerprint.
         if validators.is_openpgp_key_fingerprint_allowed(fingerprint) != True:
@@ -152,11 +157,6 @@ def remove_public_key():
         if validators.is_openpgp_keyring_allowed(keyring) != True:
             logging.error("upload_public_key() keyring validation failed")
             return "error: keyring validation failed"
-
-        # Validate password.
-        if validators.is_password_allowed(password) != True:
-            logging.error("remove_public_key() password validation failed")
-            return "error: password validation failed"
 
         # Check if password is correct.
         try:
