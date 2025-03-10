@@ -58,11 +58,9 @@ def upload_public_key():
         # Check if password is correct.
         try:
             if ph.verify(current_app.config["PASSWORD_HASH"], password) != True:
-                time.sleep(1)
                 logging.error("upload_public_key() wrong password")
                 return "error: wrong password"
         except:
-            time.sleep(1)
             logging.error("upload_public_key() wrong password")
             return "error: wrong password"
         time.sleep(1)
