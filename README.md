@@ -29,7 +29,7 @@ Step 5: Install package<br>
 
 ## Testing
 `cd [code path]`<br>
-`pytest --cov=ddmail_openpgp_keyhandler tests/ --config=[config file path]`
+`pytest --cov=ddmail_openpgp_keyhandler tests/ --config=[config file path] --password=[password]`
 
 ## Coding
 Follow PEP8 and PEP257. Use Flake8 with flake8-docstrings for linting. Strive for 100% test coverage.
