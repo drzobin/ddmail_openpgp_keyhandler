@@ -23,6 +23,10 @@ def upload_public_key():
         password = request.form.get('password')
 
         # Check if input from form is None.
+        if password == None:
+            logging.error("remove_public_key() password is None")
+            return "error: password is none"
+
         if public_key == None:
             logging.error("remove_public_key() public_key is None")
             return "error: public_key is none"
@@ -31,14 +35,15 @@ def upload_public_key():
             logging.error("remove_public_key() keyring is None")
             return "error: keyring is none"
 
-        if password == None:
-            logging.error("remove_public_key() password is None")
-            return "error: password is none"
-
         # Remove whitespace character.
         public_key = public_key.strip()
         keyring = keyring.strip()
         password = password.strip()
+        
+        # Validate password.
+        if validators.is_password_allowed(password) != True:
+            logging.error("upload_public_key() password validation failed")
+            return "error: password validation failed"
 
         # Validate public_key.
         if validators.is_openpgp_public_key_allowed(public_key) != True:
@@ -49,11 +54,6 @@ def upload_public_key():
         if validators.is_openpgp_keyring_allowed(keyring) != True:
             logging.error("upload_public_key() keyring validation failed")
             return "error: keyring validation failed"
-
-        # Validate password.
-        if validators.is_password_allowed(password) != True:
-            logging.error("upload_public_key() password validation failed")
-            return "error: password validation failed"
 
         # Check if password is correct.
         try:
