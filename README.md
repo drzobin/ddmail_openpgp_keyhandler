@@ -28,7 +28,7 @@ Step 5: Install package<br>
 `pip install dist/[package name].whl`
 
 ## Testing
-`cd [code path]`
+`cd [code path]`<br>
 `pytest --cov=ddmail_openpgp_keyhandler tests/ --config=[config file path]`
 
 ## Coding
