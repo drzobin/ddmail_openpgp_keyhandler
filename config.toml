@@ -6,7 +6,7 @@
 [TESTING]
     SECRET_KEY = 'change_me'
     PASSWORD_HASH = 'change_me'
-    GNUPG_HOME = '/opt/ddmail_keyrings'
+    GNUPG_HOME = '/tmp'
 
 [DEVELOPMENT]
     SECRET_KEY = 'change_me'
