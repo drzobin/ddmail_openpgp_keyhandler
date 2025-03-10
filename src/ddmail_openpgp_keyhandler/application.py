@@ -84,7 +84,7 @@ def upload_public_key():
             return "error: import_result.fingerprints[0] is None"
 
         # Validate fingerprint from importe_result.
-        if validators.is_fingerprint_allowed(import_result.fingerprints[0]) != True:
+        if validators.is_openpgp_key_fingerprint_allowed(import_result.fingerprints[0]) != True:
             logging.error("remove_public_key() import_result.fingerprints[0] validation failed")
             return "error: import_result.fingerprints[0] validation failed"
 
