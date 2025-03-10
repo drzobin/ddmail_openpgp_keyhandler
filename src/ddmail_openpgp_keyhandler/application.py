@@ -155,24 +155,30 @@ def remove_public_key():
 
         # Validate keyring.
         if validators.is_openpgp_keyring_allowed(keyring) != True:
-            logging.error("upload_public_key() keyring validation failed")
+            logging.error("remove_public_key() keyring validation failed")
             return "error: keyring validation failed"
 
         # Check if password is correct.
         try:
             if ph.verify(current_app.config["PASSWORD_HASH"], password) != True:
                 time.sleep(1)
-                logging.error("change_password_on_key() wrong password")
+                logging.error("remove_public_key() wrong password")
                 return "error: wrong password"
         except:
             time.sleep(1)
-            logging.error("change_password_on_key() wrong password")
+            logging.error("remove_public_key() wrong password")
             return "error: wrong password"
         time.sleep(1)
 
-        # Create gnupg gpg object.
         gnuhome_path = current_app.config["GNUPG_HOME"]
         keyring_path = current_app.config["GNUPG_HOME"] + "/" + keyring
+        
+        # Check if keyring excist on disc.
+        if os.path.isfile(keyring_path) is not True:
+            logging.error("remove_public_key() can not find keyring file")
+            return "error: can not find keyring file"
+        
+        # Create gnupg gpg object.
         gpg = gnupg.GPG(gnupghome=gnuhome_path, keyring=keyring_path, gpgbinary="/usr/bin/gpg")
 
         # Get public keys data from keyring.
