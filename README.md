@@ -27,9 +27,9 @@ Packages is now located under dist folder<br>
 Step 5: Install package<br>
 `pip install dist/[package name].whl`
 
+## Testing
+`cd [code path]`
+`pytest --cov=ddmail_openpgp_keyhandler tests/ --config=[config file path]`
+
 ## Coding
 Follow PEP8 and PEP257. Use Flake8 with flake8-docstrings for linting. Strive for 100% test coverage.
-
-## Testing
-cd [code path]
-`pytest --cov=ddmail_openpgp_keyhandler tests/ --config=[config file path]`
