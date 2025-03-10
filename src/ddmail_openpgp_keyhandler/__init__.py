@@ -8,13 +8,20 @@ def create_app(config_file = None, test_config = None):
     """Create and configure an instance of the Flask application ddmail_openpgp_keyhandler."""
     app = Flask(__name__, instance_relative_config=True)
 
-    # Parse toml config file.
     toml_config = None
+
+    # Check if config_file has been set.
+    if config_file is None:
+        print("Error: you need to set path to configuration file in toml format")
+        sys.exit(1)
+
+    # Parse toml config file.
     with open(config_file, 'r') as f:
         toml_config = toml.load(f)
 
     # Set app configurations from toml config file.
     mode=os.environ.get('MODE')
+    print("Running in MODE: " + mode)
     if mode == "PRODUCTION":
         app.config["SECRET_KEY"] = toml_config["PRODUCTION"]["SECRET_KEY"]
         app.config["PASSWORD_HASH"] = toml_config["PRODUCTION"]["PASSWORD_HASH"]
