@@ -7,6 +7,9 @@ DDMail is a e-mail system/service and e-mail provider with strong focus on secur
 ## Operating system
 Developt for and tested on debian 12.
 
+## Install using pip
+`pip install ddmail-openpgp-keyhandler`
+
 ## Building and installing from source using hatchling.
 Step 1: clone github repo<br>
 `git clone https://github.com/drzobin/ddmail_openpgp_keyhandler [code path]`<br>
