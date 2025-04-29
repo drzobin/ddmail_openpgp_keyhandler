@@ -4,7 +4,9 @@ import subprocess
 import gnupg
 from flask import Blueprint, current_app, request
 from argon2 import PasswordHasher
+from argon2.exceptions import VerifyMismatchError
 import ddmail_validators.validators as validators
+
 
 bp = Blueprint("application", __name__, url_prefix="/")
 
@@ -56,10 +58,9 @@ def upload_public_key():
             if ph.verify(current_app.config["PASSWORD_HASH"], password) != True:
                 current_app.logger.error("wrong password")
                 return "error: wrong password"
-        except:
+        except VerifyMismatchError:
             current_app.logger.error("wrong password")
             return "error: wrong password"
-        time.sleep(1)
 
         # Create gnupg gpg object.
         gnuhome_path = current_app.config["GNUPG_HOME"]
@@ -157,14 +158,11 @@ def remove_public_key():
         # Check if password is correct.
         try:
             if ph.verify(current_app.config["PASSWORD_HASH"], password) != True:
-                time.sleep(1)
                 current_app.logger.error("wrong password")
                 return "error: wrong password"
-        except:
-            time.sleep(1)
+        except VerifyMismatchError:
             current_app.logger.error("wrong password")
             return "error: wrong password"
-        time.sleep(1)
 
         gnuhome_path = current_app.config["GNUPG_HOME"]
         keyring_path = current_app.config["GNUPG_HOME"] + "/" + keyring
