@@ -11,17 +11,17 @@ def test_upload_public_key(client,password):
     assert b"error: password validation failed" in response.data
 
 
-    response = client.post("/upload_public_key", data={"public_key":"no public key","keyring":"nokeyring","password":"wrongpassword"})
+    response = client.post("/upload_public_key", data={"public_key":"no public key","keyring":"nokeyring","password":"A"*24})
     assert response.status_code == 200
     assert b"error: public key validation failed" in response.data
 
 
-    response = client.post("/upload_public_key", data={"public_key":fake_pubkey,"keyring":"no keyring","password":"wrongpassword"})
+    response = client.post("/upload_public_key", data={"public_key":fake_pubkey,"keyring":"no keyring","password":"A"*24})
     assert response.status_code == 200
     assert b"error: keyring validation failed" in response.data
 
 
-    response = client.post("/upload_public_key", data={"public_key":fake_pubkey,"keyring":"MYKEYRINGTEST","password":"wrongpassword"})
+    response = client.post("/upload_public_key", data={"public_key":fake_pubkey,"keyring":"MYKEYRINGTEST","password":"A"*24})
     assert response.status_code == 200
     assert b"error: wrong password" in response.data
     
@@ -37,15 +37,15 @@ def test_remove_public_key(client, password):
     assert response.status_code == 200
     assert b"error: password validation failed" in response.data
     
-    response = client.post("/remove_public_key", data={"fingerprint":"nofingerprint","keyring":"nokeyring","password":"wrongpassword"})
+    response = client.post("/remove_public_key", data={"fingerprint":"nofingerprint","keyring":"nokeyring","password":"A"*24})
     assert response.status_code == 200
     assert b"error: fingerprint validation failed" in response.data
     
-    response = client.post("/remove_public_key", data={"fingerprint":fingerprint,"keyring":"nokeyring","password":"wrongpassword"})
+    response = client.post("/remove_public_key", data={"fingerprint":fingerprint,"keyring":"nokeyring","password":"A"*24})
     assert response.status_code == 200
     assert b"error: keyring validation failed" in response.data
     
-    response = client.post("/remove_public_key", data={"fingerprint":fingerprint,"keyring":"MYKEYRINGTEST","password":"wrongpassword"})
+    response = client.post("/remove_public_key", data={"fingerprint":fingerprint,"keyring":"MYKEYRINGTEST","password":"A"*24})
     assert response.status_code == 200
     assert b"error: wrong password" in response.data
     
