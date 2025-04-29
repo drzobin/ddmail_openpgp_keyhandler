@@ -2,13 +2,19 @@
     SECRET_KEY = 'change_me'
     PASSWORD_HASH = 'change_me'
     GNUPG_HOME = '/opt/ddmail_keyrings'
+    LOGLEVEL = 'INFO'
+    LOGFILE = '/var/log/ddmail_openpgp_keyhandler.log'
 
 [TESTING]
     SECRET_KEY = 'change_me'
     PASSWORD_HASH = 'change_me'
     GNUPG_HOME = '/tmp'
+    LOGLEVEL = 'INFO'
+    LOGFILE = '/var/log/ddmail_openpgp_keyhandler.log'
 
 [DEVELOPMENT]
     SECRET_KEY = 'change_me'
     PASSWORD_HASH = 'change_me'
     GNUPG_HOME = '/opt/ddmail_keyrings'
+    LOGLEVEL = 'DEBUG'
+    LOGFILE = '/var/log/ddmail_openpgp_keyhandler.log'
