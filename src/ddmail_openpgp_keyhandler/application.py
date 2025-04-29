@@ -77,12 +77,12 @@ def upload_public_key():
         # Check that fingerprint from importe_result is not None.
         if import_result.fingerprints[0] == None:
             current_app.logger.error("import_result.fingerprints[0] is None")
-            return "error: import_result.fingerprints[0] is None"
+            return "error: import_result.fingerprints is None"
 
         # Validate fingerprint from importe_result.
         if validators.is_openpgp_key_fingerprint_allowed(import_result.fingerprints[0]) != True:
             current_app.logger.error("import_result.fingerprints[0] validation failed")
-            return "error: import_result.fingerprints[0] validation failed"
+            return "error: import_result.fingerprints validation failed"
 
         # Set trustlevel of imported public key.
         gpg.trust_keys(import_result.fingerprints[0], "TRUST_ULTIMATE")
@@ -101,12 +101,12 @@ def upload_public_key():
                 # Check public key trust level.
                 if key["trust"] != "u":
                     current_app.logger.error("failed to set trust level of key " + str(import_result.fingerprint[0]) + " for keyring " + str(keyring))
-                    return "upload_public_key() failed to set trust level of key " + str(import_result.fingerprint[0]) + " for keyring " + str(keyring)
+                    return "error: failed to set trust level of key"
 
         # Check that imported public key fingerprint exist in keyring.
         if fingerprint_from_keyring == None:
             current_app.logger.error("failed to find key " + str(import_result.fingerprint[0])  +" in keyring " + str(keyring))
-            return "error: failed to find key " + str(import_result.fingerprint[0]) + " in keyring " + str(keyring)
+            return "error: failed to find key"
 
         current_app.logger.debug("imported public key with fingerprint: " + import_result.fingerprints[0])
         return "done fingerprint: " + import_result.fingerprints[0]
@@ -191,7 +191,7 @@ def remove_public_key():
         # Check that public key fingerprint exist in keyring.
         if fingerprint_from_keyring == None:
             current_app.logger.error("failed to find key " + str(fingerprint)  +" in keyring " + str(keyring))
-            return "error: failed to find key " + str(fingerprint) + " in keyring " + str(keyring)
+            return "error: failed to find key"
 
         # Delete public key.
         delete_result = gpg.delete_keys(fingerprint)
@@ -214,7 +214,7 @@ def remove_public_key():
         # Check that public key fingerprint do not exist anymore in keyring.
         if fingerprint_from_keyring != None:
             current_app.logger.error("failed key " + str(fingerprint)  +" is still in keyring " + str(keyring))
-            return "error: failed key " + str(fingerprint) + " is still in keyring " + str(keyring)
+            return "error: key is still in keyring"
 
         current_app.logger.debug("done")
         return "done"
