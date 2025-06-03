@@ -1,6 +1,7 @@
 import sys
 import os
 import logging
+import logging.handlers
 import toml
 from logging.config import dictConfig
 from logging import FileHandler
@@ -45,7 +46,7 @@ def create_app(config_file = None, test_config = None):
     # Set app configurations from toml config file.
     mode=os.environ.get('MODE')
     print("Running in MODE: " + mode)
-    if mode == "PRODUCTION" or mode == "TESTING" or mode == DEVELOPMENT:
+    if mode == "PRODUCTION" or mode == "TESTING" or mode == "DEVELOPMENT":
         app.config["SECRET_KEY"] = toml_config[mode]["SECRET_KEY"]
         app.config["PASSWORD_HASH"] = toml_config[mode]["PASSWORD_HASH"]
         app.config["GPG_BINARY_PATH"] = toml_config[mode]["GPG_BINARY_PATH"]
@@ -64,13 +65,13 @@ def create_app(config_file = None, test_config = None):
             app.logger.addHandler(syslog_handler)
 
         # Configure loglevel.
-        if toml_config[mode]["LOGLEVEL"] == "ERROR":
+        if toml_config[mode]["LOGGING"]["LOGLEVEL"] == "ERROR":
             app.logger.setLevel(logging.ERROR)
-        elif toml_config[mode]["LOGLEVEL"] == "WARNING":
+        elif toml_config[mode]["LOGGING"]["LOGLEVEL"] == "WARNING":
             app.logger.setLevel(logging.WARNING)
-        elif toml_config[mode]["LOGLEVEL"] == "INFO":
+        elif toml_config[mode]["LOGGING"]["LOGLEVEL"] == "INFO":
             app.logger.setLevel(logging.INFO)
-        elif toml_config[mode]["LOGLEVEL"] == "DEBUG":
+        elif toml_config[mode]["LOGGING"]["LOGLEVEL"] == "DEBUG":
             app.logger.setLevel(logging.DEBUG)
         else:
             print("Error: you need to set LOGLEVEL to ERROR/WARNING/INFO/DEBUG")
