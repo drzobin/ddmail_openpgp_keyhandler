@@ -1,6 +1,9 @@
 import os
 import time
 import subprocess
+import string
+import secrets
+import shutil
 import gnupg
 from flask import Blueprint, current_app, request
 from argon2 import PasswordHasher
@@ -10,14 +13,13 @@ import ddmail_validators.validators as validators
 
 bp = Blueprint("application", __name__, url_prefix="/")
 
-@bp.route("/upload_public_key", methods=["POST"])
-def upload_public_key():
+@bp.route("/get_fingerprint", methods=["POST"])
+def get_fingerprint():
     if request.method == 'POST':
         ph = PasswordHasher()
 
         # Get post form data.
         public_key = request.form.get('public_key')
-        keyring = request.form.get('keyring')
         password = request.form.get('password')
 
         # Check if input from form is None.
@@ -29,15 +31,10 @@ def upload_public_key():
             current_app.logger.error("public_key is None")
             return "error: public_key is none"
 
-        if keyring == None:
-            current_app.logger.error("keyring is None")
-            return "error: keyring is none"
-
         # Remove whitespace character.
         public_key = public_key.strip()
-        keyring = keyring.strip()
         password = password.strip()
-        
+
         # Validate password.
         if validators.is_password_allowed(password) != True:
             current_app.logger.error("password validation failed")
@@ -48,11 +45,6 @@ def upload_public_key():
             current_app.logger.error("public key validation failed")
             return "error: public key validation failed"
 
-        # Validate keyring.
-        if validators.is_openpgp_keyring_allowed(keyring) != True:
-            current_app.logger.error("keyring validation failed")
-            return "error: keyring validation failed"
-
         # Check if password is correct.
         try:
             if ph.verify(current_app.config["PASSWORD_HASH"], password) != True:
@@ -62,10 +54,22 @@ def upload_public_key():
             current_app.logger.error("wrong password")
             return "error: wrong password"
 
+        # Generate a random string.
+        alphabet = string.ascii_letters + string.digits
+        random = ''.join(secrets.choice(alphabet) for i in range(24))
+
+        # Set vars to be used for gnupg gpg object.
+        tmp_folder = current_app.config["TMP_FOLDER"]
+        gpg_binary_path = current_app.config["GPG_BINARY_PATH"]
+        gnupghome_path = tmp_folder + "/" + random
+        keyring_path = gnupghome_path + "/" + random
+
+        # Create gnupghome_path folder.
+        if not os.path.exists(gnupghome_path):
+            os.makedirs(gnupghome_path)
+
         # Create gnupg gpg object.
-        gnuhome_path = current_app.config["GNUPG_HOME"]
-        keyring_path = current_app.config["GNUPG_HOME"] + "/" + keyring
-        gpg = gnupg.GPG(gnupghome=gnuhome_path, keyring=keyring_path, gpgbinary="/usr/bin/gpg")
+        gpg = gnupg.GPG(gnupghome=gnupghome_path, keyring=keyring_path, gpgbinary=gpg_binary_path)
 
         # Upload public key.
         import_result = gpg.import_keys(public_key)
@@ -73,24 +77,24 @@ def upload_public_key():
         # Check if 1 key has been imported.
         if import_result.count != 1:
             current_app.logger.error("import_result.count is not 1")
-            return "error: failed to upload public key"
+            shutil.rmtree(gnupghome_path)
+            return "error: failed to get fingerprint from public key"
 
         # Check that fingerprint from importe_result is not None.
         if import_result.fingerprints[0] == None:
             current_app.logger.error("import_result.fingerprints[0] is None")
+            shutil.rmtree(gnupghome_path)
             return "error: import_result.fingerprints is None"
 
         # Validate fingerprint from importe_result.
         if validators.is_openpgp_key_fingerprint_allowed(import_result.fingerprints[0]) != True:
             current_app.logger.error("import_result.fingerprints[0] validation failed")
+            shutil.rmtree(gnupghome_path)
             return "error: import_result.fingerprints validation failed"
-
-        # Set trustlevel of imported public key.
-        gpg.trust_keys(import_result.fingerprints[0], "TRUST_ULTIMATE")
 
         # Get imported public keys data from keyring.
         public_keys =  gpg.list_keys()
-        
+
         fingerprint_from_keyring = None
 
         # Find imported public key data in keyring.
@@ -102,117 +106,17 @@ def upload_public_key():
                 # Check public key trust level.
                 if key["trust"] != "u":
                     current_app.logger.error("failed to set trust level of key " + str(import_result.fingerprint[0]) + " for keyring " + str(keyring))
+                    shutil.rmtree(gnupghome_path)
                     return "error: failed to set trust level of key"
 
         # Check that imported public key fingerprint exist in keyring.
         if fingerprint_from_keyring == None:
             current_app.logger.error("failed to find key " + str(import_result.fingerprint[0])  +" in keyring " + str(keyring))
+            shutil.rmtree(gnupghome_path)
             return "error: failed to find key"
+
+        # Remove temp gnupghome folder.
+        shutil.rmtree(gnupghome_path)
 
         current_app.logger.debug("imported public key with fingerprint: " + import_result.fingerprints[0])
         return "done fingerprint: " + import_result.fingerprints[0]
-
-@bp.route("/remove_public_key", methods=["POST"])
-def remove_public_key():
-    if request.method == 'POST':
-        ph = PasswordHasher()
-
-        # Get post form data.
-        fingerprint = request.form.get('fingerprint')
-        keyring = request.form.get('keyring')
-        password = request.form.get('password')
-
-        # Check if input from form is None.
-        if fingerprint == None:
-            current_app.logger.error("fingerprint is None")
-            return "error: fingerprint is none"
-
-        if keyring == None:
-            current_app.logger.error("keyring is None")
-            return "error: keyring is none"
-
-        if password == None:
-            current_app.logger.error("password is None")
-            return "error: password is none"
-
-        # Remove whitespace character.
-        fingerprint = fingerprint.strip()
-        keyring = keyring.strip()
-        password = password.strip()
-        
-        # Validate password.
-        if validators.is_password_allowed(password) != True:
-            current_app.logger.error("password validation failed")
-            return "error: password validation failed"
-
-        # Validate fingerprint.
-        if validators.is_openpgp_key_fingerprint_allowed(fingerprint) != True:
-            current_app.logger.error("fingerprint validation failed")
-            return "error: fingerprint validation failed"
-
-        # Validate keyring.
-        if validators.is_openpgp_keyring_allowed(keyring) != True:
-            current_app.logger.error("keyring validation failed")
-            return "error: keyring validation failed"
-
-        # Check if password is correct.
-        try:
-            if ph.verify(current_app.config["PASSWORD_HASH"], password) != True:
-                current_app.logger.error("wrong password")
-                return "error: wrong password"
-        except VerifyMismatchError:
-            current_app.logger.error("wrong password")
-            return "error: wrong password"
-
-        gnuhome_path = current_app.config["GNUPG_HOME"]
-        keyring_path = current_app.config["GNUPG_HOME"] + "/" + keyring
-        
-        # Check if keyring excist on disc.
-        if os.path.isfile(keyring_path) is not True:
-            current_app.logger.error("can not find keyring file")
-            return "error: can not find keyring file"
-        
-        # Create gnupg gpg object.
-        gpg = gnupg.GPG(gnupghome=gnuhome_path, keyring=keyring_path, gpgbinary="/usr/bin/gpg")
-
-        # Get public keys data from keyring.
-        public_keys =  gpg.list_keys()
-        
-        fingerprint_fom_keyring = None
-
-        # Find public key fingerprint in keyring.
-        for key in public_keys:
-            if key["fingerprint"] == fingerprint:
-                # Get fingerprint from keystore.
-                fingerprint_from_keyring = key["fingerprint"]
-
-        # Check that public key fingerprint exist in keyring.
-        if fingerprint_from_keyring == None:
-            current_app.logger.error("failed to find key " + str(fingerprint)  +" in keyring " + str(keyring))
-            return "error: failed to find key"
-
-        # Delete public key.
-        delete_result = gpg.delete_keys(fingerprint)
-
-        if str(delete_result) != "ok":
-            current_app.logger.error("remove_result is not ok")
-            return "error: failed to remove public key"
-
-        # Get public keys data from keyring.
-        public_keys =  gpg.list_keys()
-
-        fingerprint_from_keyring = None
-
-        # Find public key fingerprint in keyring.
-        for key in public_keys:
-            if key["fingerprint"] == fingerprint:
-                # Get fingerprint from keystore.
-                fingerprint_from_keyring = key["fingerprint"]
-
-        # Check that public key fingerprint do not exist anymore in keyring.
-        if fingerprint_from_keyring != None:
-            current_app.logger.error("failed key " + str(fingerprint)  +" is still in keyring " + str(keyring))
-            return "error: key is still in keyring"
-
-        current_app.logger.debug("done")
-        return "done"
