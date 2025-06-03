@@ -64,6 +64,12 @@ def get_fingerprint():
         gnupghome_path = tmp_folder + "/" + random
         keyring_path = gnupghome_path + "/" + random
 
+        # Log vars used to create gnupg gpg object.
+        current_app.logger.debug("tmp_folder set to " + tmp_folder)
+        current_app.logger.debug("gpg_binary_path set to " + gpg_binary_path)
+        current_app.logger.debug("gnupghome_path set to " + gnupghome_path)
+        current_app.logger.debug("keyring_path set to " + keyring_path)
+
         # Check that tmp_folder exist.
         if not os.path.isdir(tmp_folder) == True:
             current_app.logger.error("tmp_folder do not exist")
