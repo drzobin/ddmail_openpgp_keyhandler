@@ -64,6 +64,11 @@ def get_fingerprint():
         gnupghome_path = tmp_folder + "/" + random
         keyring_path = gnupghome_path + "/" + random
 
+        # Check that tmp_folder exist.
+        if not os.path.isdir(tmp_folder) == True:
+            current_app.logger.error("tmp_folder do not exist")
+            return "error: failed to get fingerprint from public key beacuse tmp_folder do not exist"
+
         # Create gnupghome_path folder.
         if not os.path.exists(gnupghome_path):
             os.makedirs(gnupghome_path)
