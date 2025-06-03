@@ -1,20 +1,36 @@
 [PRODUCATION]
-    SECRET_KEY = 'change_me'
-    PASSWORD_HASH = 'change_me'
-    GNUPG_HOME = '/opt/ddmail_keyrings'
-    LOGLEVEL = 'INFO'
-    LOGFILE = '/var/log/ddmail_openpgp_keyhandler.log'
+SECRET_KEY = 'change_me'
+PASSWORD_HASH = 'change_me'
+GPG_BINARY_PATH = '/usr/bin/gpg'
+TMP_FOLDER = '/opt/ddmail_openpgp_keyhandler/tmp'
+[PRODUCTION.LOGGING]
+LOGLEVEL = 'INFO'
+LOG_TO_FILE = false
+LOGFILE = '/var/log/ddmail_openpgp_keyhandler.log'
+LOG_TO_SYSLOG = true
+SYSLOG_SERVER = '/dev/log'
 
 [TESTING]
-    SECRET_KEY = 'change_me'
-    PASSWORD_HASH = 'change_me'
-    GNUPG_HOME = '/tmp'
-    LOGLEVEL = 'INFO'
-    LOGFILE = '/var/log/ddmail_openpgp_keyhandler.log'
+SECRET_KEY = 'change_me'
+PASSWORD_HASH = 'change_me'
+GPG_BINARY_PATH = '/usr/bin/gpg'
+TMP_FOLDER = '/opt/ddmail_openpgp_keyhandler/tmp'
+[TESTING.LOGGING]
+LOGLEVEL = 'INFO'
+LOG_TO_FILE = true
+LOGFILE = '/var/log/ddmail_openpgp_keyhandler.log'
+LOG_TO_SYSLOG = false
+SYSLOG_SERVER = '/dev/log'
+
 
 [DEVELOPMENT]
-    SECRET_KEY = 'change_me'
-    PASSWORD_HASH = 'change_me'
-    GNUPG_HOME = '/opt/ddmail_keyrings'
-    LOGLEVEL = 'DEBUG'
-    LOGFILE = '/var/log/ddmail_openpgp_keyhandler.log'
+SECRET_KEY = 'change_me'
+PASSWORD_HASH = 'change_me'
+GPG_BINARY_PATH = '/usr/bin/gpg'
+TMP_FOLDER = '/opt/ddmail_openpgp_keyhandler/tmp'
+[DEVELOPMENT.LOGGING]
+LOGLEVEL = 'INFO'
+LOG_TO_FILE = true
+LOGFILE = '/var/log/ddmail_openpgp_keyhandler.log'
+LOG_TO_SYSLOG = false
+SYSLOG_SERVER = '/dev/log'
