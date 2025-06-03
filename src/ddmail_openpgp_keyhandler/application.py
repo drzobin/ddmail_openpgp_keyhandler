@@ -110,7 +110,7 @@ def get_fingerprint():
 
                 # Check public key trust level.
                 if key["trust"] != "u":
-                    current_app.logger.error("failed to set trust level of key " + str(import_result.fingerprint[0]) + " for keyring " + str(keyring))
+                    current_app.logger.error("failed to set trust level of key " + str(import_result.fingerprints[0]) + " for keyring " + str(keyring))
                     shutil.rmtree(gnupghome_path)
                     return "error: failed to set trust level of key"
 
