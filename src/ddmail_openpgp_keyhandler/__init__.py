@@ -48,12 +48,20 @@ def create_app(config_file = None, test_config = None):
     if mode == "PRODUCTION" or mode == "TESTING" or mode == DEVELOPMENT:
         app.config["SECRET_KEY"] = toml_config[mode]["SECRET_KEY"]
         app.config["PASSWORD_HASH"] = toml_config[mode]["PASSWORD_HASH"]
-        app.config["GNUPG_HOME"] = toml_config[mode]["GNUPG_HOME"]
+        app.config["GPG_BINARY_PATH"] = toml_config[mode]["GPG_BINARY_PATH"]
+        app.config["TMP_FOLDER"] = toml_config[mode]["TMP_FOLDER"]
 
-        # Configure logfile.
-        file_handler = FileHandler(filename=toml_config["PRODUCTION"]["LOGFILE"])
-        file_handler.setFormatter(logging.Formatter(log_format))
-        app.logger.addHandler(file_handler)
+        # Configure logging to file.
+        if toml_config[mode]["LOGGING"]["LOG_TO_FILE"] == True:
+            file_handler = FileHandler(filename=toml_config[mode]["LOGGING"]["LOGFILE"])
+            file_handler.setFormatter(logging.Formatter(log_format))
+            app.logger.addHandler(file_handler)
+
+        # Configure logging to syslog.
+        if toml_config[mode]["LOGGING"]["LOG_TO_SYSLOG"] == True:
+            syslog_handler = logging.handlers.SysLogHandler(address = toml_config[mode]["LOGGING"]["SYSLOG_SERVER"])
+            syslog_handler.setFormatter(logging.Formatter(log_format))
+            app.logger.addHandler(syslog_handler)
 
         # Configure loglevel.
         if toml_config[mode]["LOGLEVEL"] == "ERROR":
@@ -70,7 +78,7 @@ def create_app(config_file = None, test_config = None):
     else:
         print("Error: you need to set env variabel MODE to PRODUCTION/TESTING/DEVELOPMENT")
         sys.exit(1)
-    
+
     app.secret_key = app.config["SECRET_KEY"]
 
     # Ensure the instance folder exists
@@ -83,4 +91,4 @@ def create_app(config_file = None, test_config = None):
     from ddmail_openpgp_keyhandler import application
     app.register_blueprint(application.bp)
 
-    return app 
+    return app
