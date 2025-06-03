@@ -116,7 +116,7 @@ def get_fingerprint():
 
         # Check that imported public key fingerprint exist in keyring.
         if fingerprint_from_keyring == None:
-            current_app.logger.error("failed to find key " + str(import_result.fingerprint[0])  +" in keyring " + str(keyring))
+            current_app.logger.error("failed to find key " + str(import_result.fingerprints[0])  +" in keyring " + str(keyring))
             shutil.rmtree(gnupghome_path)
             return "error: failed to find key"
 
