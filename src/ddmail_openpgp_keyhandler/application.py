@@ -123,5 +123,5 @@ def get_fingerprint():
         # Remove temp gnupghome folder.
         shutil.rmtree(gnupghome_path)
 
-        current_app.logger.debug("imported public key with fingerprint: " + import_result.fingerprints[0])
+        current_app.logger.info("imported public key with fingerprint: " + import_result.fingerprints[0])
         return "done fingerprint: " + import_result.fingerprints[0]
