@@ -11,7 +11,7 @@ from flask import Flask
 def create_app(config_file = None, test_config = None):
     """Create and configure an instance of the Flask application ddmail_openpgp_keyhandler."""
     # Configure logging.
-    log_format = '[%(asctime)s] %(levelname)s in %(module)s %(funcName)s %(lineno)s: %(message)s'
+    log_format = '[%(asctime)s] ddmail_openpgp_keyhandler %(levelname)s in %(module)s %(funcName)s %(lineno)s: %(message)s'
     dictConfig({
         'version': 1,
         'formatters': {'default': {
