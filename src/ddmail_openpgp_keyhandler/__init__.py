@@ -8,8 +8,27 @@ from logging import FileHandler
 from flask import Flask
 
 
-def create_app(config_file = None, test_config = None):
-    """Create and configure an instance of the Flask application ddmail_openpgp_keyhandler."""
+def create_app(config_file = None):
+    """
+    Create and configure an instance of the Flask application ddmail_openpgp_keyhandler.
+
+    This function:
+    - Sets up logging configuration for the application
+    - Loads configuration from a TOML file
+    - Configures the application based on the environment mode (PRODUCTION/TESTING/DEVELOPMENT)
+    - Sets up file and/or syslog logging if configured
+    - Registers application blueprints
+
+    Args:
+        config_file (str, optional): Path to the TOML configuration file. Required.
+
+    Returns:
+        Flask: Configured Flask application instance
+
+    Raises:
+        SystemExit: If configuration file is not provided, MODE environment variable is invalid,
+                   or if loglevel configuration is invalid
+    """
     # Configure logging.
     log_format = '[%(asctime)s] ddmail_openpgp_keyhandler %(levelname)s in %(module)s %(funcName)s %(lineno)s: %(message)s'
     dictConfig({
