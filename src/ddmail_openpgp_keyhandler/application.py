@@ -51,11 +51,11 @@ def get_fingerprint():
         password = request.form.get('password')
 
         # Check if input from form is None.
-        if password == None:
+        if password is None:
             current_app.logger.error("password is None")
             return "error: password is none"
 
-        if public_key == None:
+        if public_key is None:
             current_app.logger.error("public_key is None")
             return "error: public_key is none"
 
@@ -120,7 +120,7 @@ def get_fingerprint():
             return "error: failed to get fingerprint from public key"
 
         # Check that fingerprint from importe_result is not None.
-        if import_result.fingerprints[0] == None:
+        if import_result.fingerprints[0] is None:
             current_app.logger.error("import_result.fingerprints[0] is None")
             shutil.rmtree(gnupghome_path)
             return "error: import_result.fingerprints is None"
@@ -143,7 +143,7 @@ def get_fingerprint():
                 fingerprint_from_keyring = key["fingerprint"]
 
         # Check that imported public key fingerprint exist in keyring.
-        if fingerprint_from_keyring == None:
+        if fingerprint_from_keyring is None:
             current_app.logger.error("failed to find key " + str(import_result.fingerprints[0])  +" in keyring " + str(keyring_path))
             shutil.rmtree(gnupghome_path)
             return "error: failed to find key"
