@@ -72,13 +72,13 @@ def create_app(config_file=None):
         app.config["TMP_FOLDER"] = toml_config[mode]["TMP_FOLDER"]
 
         # Configure logging to file.
-        if toml_config[mode]["LOGGING"]["LOG_TO_FILE"] == True:
+        if toml_config[mode]["LOGGING"]["LOG_TO_FILE"] is True:
             file_handler = FileHandler(filename=toml_config[mode]["LOGGING"]["LOGFILE"])
             file_handler.setFormatter(logging.Formatter(log_format))
             app.logger.addHandler(file_handler)
 
         # Configure logging to syslog.
-        if toml_config[mode]["LOGGING"]["LOG_TO_SYSLOG"] == True:
+        if toml_config[mode]["LOGGING"]["LOG_TO_SYSLOG"] is True:
             syslog_handler = logging.handlers.SysLogHandler(address=toml_config[mode]["LOGGING"]["SYSLOG_SERVER"])
             syslog_handler.setFormatter(logging.Formatter(log_format))
             app.logger.addHandler(syslog_handler)
