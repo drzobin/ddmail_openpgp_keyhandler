@@ -1,5 +1,4 @@
 import os
-import tempfile
 import pytest
 from ddmail_openpgp_keyhandler import create_app
 
@@ -10,13 +9,13 @@ config_file = None
 
 def pytest_addoption(parser):
     parser.addoption(
-        "--config",  
+        "--config",
         action="store",
         default=None,
         help="Config file to use during test.",
     )
     parser.addoption(
-        "--password",  
+        "--password",
         action="store",
         default=None,
         help="Authentication password to use during test.",
