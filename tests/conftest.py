@@ -4,8 +4,6 @@ from ddmail_openpgp_keyhandler import create_app
 
 # Set mode to TESTING so we are sure not to run with production configuration running tests.
 os.environ["MODE"] = "TESTING"
-config_file = None
-
 
 def pytest_addoption(parser):
     parser.addoption(
@@ -32,11 +30,6 @@ def password(request):
     """Fixture to retrieve config file"""
     return request.config.getoption("--password")
 
-
-@pytest.hookimpl(tryfirst=True)
-def pytest_sessionstart(session):
-    config_file = session.config.getoption("--config")
-    password = session.config.getoption("--password")
 
 @pytest.fixture
 def app(config_file):
