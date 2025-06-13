@@ -64,18 +64,18 @@ def get_fingerprint():
         password = password.strip()
 
         # Validate password.
-        if validators.is_password_allowed(password) != True:
+        if not validators.is_password_allowed(password):
             current_app.logger.error("password validation failed")
             return "error: password validation failed"
 
         # Validate public_key.
-        if validators.is_openpgp_public_key_allowed(public_key) != True:
+        if not validators.is_openpgp_public_key_allowed(public_key):
             current_app.logger.error("public key validation failed")
             return "error: public key validation failed"
 
         # Check if password is correct.
         try:
-            if ph.verify(current_app.config["PASSWORD_HASH"], password) != True:
+            if not ph.verify(current_app.config["PASSWORD_HASH"], password):
                 current_app.logger.error("wrong password")
                 return "error: wrong password"
         except VerifyMismatchError:
@@ -99,7 +99,7 @@ def get_fingerprint():
         current_app.logger.debug("keyring_path set to " + keyring_path)
 
         # Check that tmp_folder exist.
-        if not os.path.isdir(tmp_folder) == True:
+        if not os.path.isdir(tmp_folder):
             current_app.logger.error("tmp_folder do not exist")
             return "error: failed to get fingerprint from public key beacuse tmp_folder do not exist"
 
@@ -126,7 +126,7 @@ def get_fingerprint():
             return "error: import_result.fingerprints is None"
 
         # Validate fingerprint from importe_result.
-        if validators.is_openpgp_key_fingerprint_allowed(import_result.fingerprints[0]) != True:
+        if not validators.is_openpgp_key_fingerprint_allowed(import_result.fingerprints[0]):
             current_app.logger.error("import_result.fingerprints[0] validation failed")
             shutil.rmtree(gnupghome_path)
             return "error: import_result.fingerprints validation failed"
