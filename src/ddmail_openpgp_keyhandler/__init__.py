@@ -8,7 +8,7 @@ from logging import FileHandler
 from flask import Flask
 
 
-def create_app(config_file = None):
+def create_app(config_file=None):
     """
     Create and configure an instance of the Flask application ddmail_openpgp_keyhandler.
 
@@ -79,7 +79,7 @@ def create_app(config_file = None):
 
         # Configure logging to syslog.
         if toml_config[mode]["LOGGING"]["LOG_TO_SYSLOG"] == True:
-            syslog_handler = logging.handlers.SysLogHandler(address = toml_config[mode]["LOGGING"]["SYSLOG_SERVER"])
+            syslog_handler = logging.handlers.SysLogHandler(address=toml_config[mode]["LOGGING"]["SYSLOG_SERVER"])
             syslog_handler.setFormatter(logging.Formatter(log_format))
             app.logger.addHandler(syslog_handler)
 
