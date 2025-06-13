@@ -5,6 +5,7 @@ from ddmail_openpgp_keyhandler import create_app
 # Set mode to TESTING so we are sure not to run with production configuration running tests.
 os.environ["MODE"] = "TESTING"
 
+
 def pytest_addoption(parser):
     parser.addoption(
         "--config",
