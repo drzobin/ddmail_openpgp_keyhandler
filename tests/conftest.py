@@ -26,6 +26,7 @@ def config_file(request):
     """Fixture to retrieve config file"""
     return request.config.getoption("--config")
 
+
 @pytest.fixture(scope="session")
 def password(request):
     """Fixture to retrieve config file"""
