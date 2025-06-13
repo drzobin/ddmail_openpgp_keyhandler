@@ -15,6 +15,36 @@ bp = Blueprint("application", __name__, url_prefix="/")
 
 @bp.route("/get_fingerprint", methods=["POST"])
 def get_fingerprint():
+    """
+    Extracts the fingerprint from a PGP public key after validation.
+
+    This function processes a POST request containing a PGP public key and a password.
+    It validates the inputs, verifies the password against a stored hash, and then
+    extracts the fingerprint from the provided public key using GnuPG.
+
+    Returns:
+        str: A success message with the extracted fingerprint if successful,
+             or an error message describing the issue encountered.
+
+    Request Form Parameters:
+        public_key (str): The PGP public key to extract the fingerprint from
+        password (str): The password for authentication
+
+    Error Responses:
+        "error: password is none": If the password parameter is missing
+        "error: public_key is none": If the public_key parameter is missing
+        "error: password validation failed": If the password doesn't meet validation requirements
+        "error: public key validation failed": If the public key format is invalid
+        "error: wrong password": If the provided password doesn't match the stored hash
+        "error: failed to get fingerprint from public key beacuse tmp_folder do not exist": If the temporary folder doesn't exist
+        "error: failed to get fingerprint from public key": If the key import process fails
+        "error: import_result.fingerprints is None": If no fingerprint was extracted
+        "error: import_result.fingerprints validation failed": If the extracted fingerprint is invalid
+        "error: failed to find key": If the imported key can't be found in the keyring
+
+    Success Response:
+        "done fingerprint: [FINGERPRINT]": Returns the extracted fingerprint
+    """
     if request.method == 'POST':
         ph = PasswordHasher()
 
