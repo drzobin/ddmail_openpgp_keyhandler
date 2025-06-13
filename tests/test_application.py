@@ -10,11 +10,11 @@ def test_get_fingerprint2(client,password):
     assert b"error: public key validation failed" in response.data
 
 def test_get_fingerprint3(client,password):
-    fake_pubkey = "-----BEGIN PGP PUBLIC KEY BLOCK-----aB1+/=-----END PGP PUBLIC KEY BLOCK-----"
+    fake_pubkey = "-----BEGIN PGP PUBLIC KEY BLOCK-----aB1+!=-----END PGP PUBLIC KEY BLOCK-----"
 
     response = client.post("/get_fingerprint", data={"public_key":fake_pubkey,"password":password})
     assert response.status_code == 200
-    assert b"error: keyring validation failed" in response.data
+    assert b"error: public key validation failed" in response.data
 
 def test_get_fingerprint4(client,password):
     fake_pubkey = "-----BEGIN PGP PUBLIC KEY BLOCK-----aB1+/=-----END PGP PUBLIC KEY BLOCK-----"
