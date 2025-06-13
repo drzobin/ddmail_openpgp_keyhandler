@@ -64,7 +64,7 @@ def create_app(config_file=None):
 
     # Set app configurations from toml config file.
     mode=os.environ.get('MODE')
-    print("Running in MODE: " + mode)
+    print("Running in MODE: " + str(mode))
     if mode == "PRODUCTION" or mode == "TESTING" or mode == "DEVELOPMENT":
         app.config["SECRET_KEY"] = toml_config[mode]["SECRET_KEY"]
         app.config["PASSWORD_HASH"] = toml_config[mode]["PASSWORD_HASH"]
