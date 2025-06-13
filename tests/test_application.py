@@ -1,6 +1,3 @@
-from flask import current_app
-import pytest
-import os
 
 def test_get_fingerprint1(client,password):
     response = client.post("/get_fingerprint", data={"public_key":"nopublickey","password":"wrong password"})
