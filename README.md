@@ -5,7 +5,7 @@ Web application API to handle OpenPGP keys and keyrings for the DDMail project.
 DDMail is a e-mail system/service that prioritizes security. A current production example can be found at www.ddmail.se
 
 ## Operating system
-Developt for and tested on debian 12.
+Developt for and tested on debian 13.
 
 ## Install using pip
 `pip install ddmail-openpgp-keyhandler`
