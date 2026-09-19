@@ -2,7 +2,7 @@
 name = "ddmail_openpgp_keyhandler"
 version = "0.0.3"
 authors = [
-  { name="Robin Larsson", email="me@drz.se" },
+  { name="Robin Larsson", email="robin@ddmail.se" },
 ]
 description = "Web application API to handle OpenPGP keys and keyrings for the ddmail project"
 readme = "README.md"
