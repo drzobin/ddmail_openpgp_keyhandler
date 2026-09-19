@@ -1,4 +1,4 @@
-[PRODUCATION]
+[PRODUCTION]
 SECRET_KEY = 'change_me'
 PASSWORD_HASH = 'change_me'
 GPG_BINARY_PATH = '/usr/bin/gpg'
